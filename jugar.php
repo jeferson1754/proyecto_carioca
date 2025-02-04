@@ -1,7 +1,7 @@
 <?php
 include('bd.php');
 // Obtener los usuarios de la base de datos
-$sql = "SELECT id, nombre FROM usuarios";
+$sql = "SELECT id, nombre FROM jugadores";
 $result = $conn->query($sql);
 ?>
 

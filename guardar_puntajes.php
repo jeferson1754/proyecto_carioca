@@ -1,67 +1,108 @@
 <?php
-include 'bd.php'; // Asegúrate de incluir tu conexión ($conn)
+include 'bd.php'; // Conexión a la base de datos
 
-if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['puntajes'], $_POST['id_partida'], $_POST['id_juego'])) {
-    $id_partida = $_POST['id_partida'];
-    $id_juego = $_POST['id_juego'];
+$id_partida = $_POST['id_partida'];
+$nombre_juego = $_POST['juego'];
+$puntajes = $_POST['puntajes'];
 
-    $id_juego_new = $id_juego + 1;
 
-    try {
-        // Verificar si el id_partida existe en la tabla partidas
-        $sql_verificar_partida = "SELECT COUNT(*) FROM partidas WHERE id = :id_partida";
-        $stmt_verificar = $connect->prepare($sql_verificar_partida);
-        $stmt_verificar->execute(['id_partida' => $id_partida]);
-        $count = $stmt_verificar->fetchColumn();
+$sql = "SELECT ID FROM tipo_juego WHERE juego = ?";
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("s", $nombre_juego);
+$stmt->execute();
+$result = $stmt->get_result();
+$ultimo_juego = $result->fetch_assoc();
+$id_ultimo_juego = $ultimo_juego['ID'];
 
-        if ($count == 0) {
-            // Si el id_partida no existe, muestra un error y detén la ejecución
-            throw new Exception("El id_partida proporcionado no existe en la tabla partidas.");
-        }
-
-        // Preparar la consulta para insertar los puntajes en detalles_partida
-        $sql = "INSERT INTO detalles_partida (partida_id, jugador_id, tipo_juego_id, puntaje) 
-                VALUES (:id_partida, :id_jugador, :tipo_juego, :puntaje)";
-        $stmt = $connect->prepare($sql);
-
-        if ($stmt === false) {
-            throw new Exception("Error en la preparación de la consulta: " . implode(", ", $connect->errorInfo()));
-        }
-
-        // Insertar los puntajes
-        foreach ($_POST['puntajes'] as $id_jugador => $nuevo_puntaje) {
-            $stmt->execute([
-                'id_partida' => $id_partida,
-                'id_jugador' => $id_jugador,
-                'tipo_juego' => $id_juego,
-                'puntaje' => $nuevo_puntaje
-            ]);
-        }
-
-        // Preparar la consulta para insertar los puntajes en detalles_partida
-        $sql = "INSERT INTO detalles_partida (partida_id, jugador_id, tipo_juego_id, puntaje) 
-            VALUES (:id_partida, :id_jugador, :tipo_juego, :puntaje)";
-        $stmt = $connect->prepare($sql);
-
-        if ($stmt === false) {
-            throw new Exception("Error en la preparación de la consulta: " . implode(", ", $connect->errorInfo()));
-        }
-
-        // Insertar los puntajes
-        foreach ($_POST['puntajes'] as $id_jugador => $nuevo_puntaje) {
-            $stmt->execute([
-                'id_partida' => $id_partida,
-                'id_jugador' => $id_jugador,
-                'tipo_juego' => $id_juego_new,
-                'puntaje' => 0
-            ]);
-        }
-    } catch (Exception $e) {
-        // Captura el error y lo muestra
-        echo "Error: " . $e->getMessage();
-        exit();
-    }
+if (!$id_ultimo_juego) {
+    die("Error: No se encontró el ID del juego '$nombre_juego'");
 }
 
-header("Location: partida.php"); // Redirige de vuelta
-exit();
+var_dump($puntajes);
+$id_array = $id_ultimo_juego - 1;
+
+
+foreach ($puntajes as $id_jugador => $juegos) {
+    // Acceder al puntaje del jugador para el juego con ID 3 (o el juego que corresponda)
+    // Se asume que el juego ID 3 es el único en este caso, pero si hay varios juegos, debes ajustarlo según la lógica.
+
+    $puntaje_jugador = isset($juegos[$id_array]) ? intval($juegos[$id_array]) : 0;
+
+    $sql = "UPDATE detalles_partida 
+            SET puntaje = ? 
+            WHERE partida_id = ? 
+            AND jugador_id = ? 
+            AND tipo_juego_id = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("iiii", $puntaje_jugador, $id_partida, $id_jugador, $id_ultimo_juego);
+    $stmt->execute();
+}
+
+if (isset($_POST['omitir'])) {
+    // Obtener el siguiente ID de juego basado en el actual
+    $sql = "SELECT ID FROM tipo_juego WHERE ID > ? ORDER BY ID ASC LIMIT 1";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("i", $id_ultimo_juego);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $siguiente_juego = $result->fetch_assoc();
+    $id_siguiente_juego = $siguiente_juego['ID'] ?? null;
+
+    if ($id_siguiente_juego) {
+        // Recorrer cada jugador para insertar el siguiente juego solo si no existe ya una entrada
+        foreach ($puntajes as $id_jugador => $juegos) {
+            // Verificar si ya existe una entrada en la tabla 'detalles_partida'
+            $sql_check = "SELECT 1 FROM detalles_partida WHERE partida_id = ? AND jugador_id = ? AND tipo_juego_id = ?";
+            $stmt_check = $conn->prepare($sql_check);
+            $stmt_check->bind_param("iii", $id_partida, $id_jugador, $id_siguiente_juego);
+            $stmt_check->execute();
+            $result_check = $stmt_check->get_result();
+
+            // Si no existe, insertar el nuevo puntaje con valor inicial
+            if ($result_check->num_rows == 0) {
+                $puntaje_inicial = 0; // Puntaje predeterminado
+
+                $sql_insert = "INSERT INTO detalles_partida (puntaje, partida_id, jugador_id, tipo_juego_id) 
+                        VALUES (?, ?, ?, ?)";
+                $stmt_insert = $conn->prepare($sql_insert);
+                $stmt_insert->bind_param("iiii", $puntaje_inicial, $id_partida, $id_jugador, $id_siguiente_juego);
+                $stmt_insert->execute();
+            }
+        }
+    }
+} else {
+    // Obtener el siguiente ID de juego basado en el actual
+    $sql = "SELECT ID FROM tipo_juego WHERE ID > ? ORDER BY ID ASC LIMIT 1";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("i", $id_ultimo_juego);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $siguiente_juego = $result->fetch_assoc();
+    $id_siguiente_juego = $siguiente_juego['ID'] ?? null;
+
+    if ($id_siguiente_juego) {
+        // Recorrer cada jugador para insertar el siguiente juego solo si no existe ya una entrada
+        foreach ($puntajes as $id_jugador => $juegos) {
+            // Verificar si ya existe una entrada en la tabla 'detalles_partida'
+            $sql_check = "SELECT 1 FROM detalles_partida WHERE partida_id = ? AND jugador_id = ? AND tipo_juego_id = ?";
+            $stmt_check = $conn->prepare($sql_check);
+            $stmt_check->bind_param("iii", $id_partida, $id_jugador, $id_siguiente_juego);
+            $stmt_check->execute();
+            $result_check = $stmt_check->get_result();
+
+            // Si no existe, insertar el nuevo puntaje con valor inicial
+            if ($result_check->num_rows == 0) {
+                $puntaje_inicial = 0; // Puntaje predeterminado
+
+                $sql_insert = "INSERT INTO detalles_partida (puntaje, partida_id, jugador_id, tipo_juego_id) 
+                        VALUES (?, ?, ?, ?)";
+                $stmt_insert = $conn->prepare($sql_insert);
+                $stmt_insert->bind_param("iiii", $puntaje_inicial, $id_partida, $id_jugador, $id_siguiente_juego);
+                $stmt_insert->execute();
+            }
+        }
+    }
+}
+// Redireccionar
+header("Location: partida.php");
+exit;

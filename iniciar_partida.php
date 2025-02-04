@@ -22,6 +22,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['jugadores'])) {
 
         $connect->commit(); // Confirmar transacción
         echo "Partida creada exitosamente con los jugadores seleccionados.";
+
+        header("Location: partida.php");
     } catch (Exception $e) {
         $connect->rollBack(); // Revertir cambios en caso de error
         echo "Error: " . $e->getMessage();
