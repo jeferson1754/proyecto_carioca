@@ -145,9 +145,12 @@
 
     if ($cantidad_jugadores > 3) {
         $cant = 3;
-    } else {
+    } else if ($cantidad_jugadores > 2) {
         $cant = 4;
+    } else {
+        $cant = 6;
     }
+
 
     ?>
 
