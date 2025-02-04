@@ -140,6 +140,15 @@
     $min_puntaje = min(array_map('min', $puntajes));
 
     $cantidad_juegos = count($juegos);
+
+    $cantidad_jugadores = count($jugadores);
+
+    if ($cantidad_jugadores > 3) {
+        $cant = 3;
+    } else {
+        $cant = 4;
+    }
+
     ?>
 
     <div class="container">
@@ -151,7 +160,7 @@
 
             <div class="row mb-4">
                 <?php foreach ($jugadores as $id_jugador => $jugador): ?>
-                    <div class="col-md-3">
+                    <div class="col-md-<?php echo ($cant); ?>">
                         <div class="player-card text-center">
                             <h4><?php echo htmlspecialchars($jugador['nombre']); ?></h4>
                             <div class="probability-badge">
