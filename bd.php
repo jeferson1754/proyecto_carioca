@@ -8,6 +8,11 @@ $conexion = mysqli_connect($servidor, $usuario, $password) or die("No se ha podi
 mysqli_query($conexion, "SET SESSION collation_connection ='utf8_unicode_ci'");
 $db = mysqli_select_db($conexion, $basededatos) or die("Upps! Error en conectar a la Base de Datos");
 
+date_default_timezone_set('America/Santiago');
+
+$fecha_actual = date('Y-m-d H:i:s');
+
+
 try {
     $connect = new PDO("mysql:host=$servidor;dbname=$basededatos", $usuario, $password);
     $connect->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);

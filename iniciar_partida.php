@@ -8,8 +8,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['jugadores'])) {
         $connect->beginTransaction(); // Iniciar transacción
 
         // Insertar nueva partida
-        $stmt = $connect->prepare("INSERT INTO partidas () VALUES ()");
-        $stmt->execute();
+        $stmt = $connect->prepare("INSERT INTO partidas (fecha) VALUES (?)");
+        $stmt->execute([$fecha_actual]);
         $id_partida = $connect->lastInsertId(); // Obtener el ID de la partida creada
 
         $id_juego = 1;
