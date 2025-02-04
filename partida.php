@@ -151,7 +151,7 @@
 
             <div class="row mb-4">
                 <?php foreach ($jugadores as $id_jugador => $jugador): ?>
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                         <div class="player-card text-center">
                             <h4><?php echo htmlspecialchars($jugador['nombre']); ?></h4>
                             <div class="probability-badge">

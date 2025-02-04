@@ -66,6 +66,14 @@
     ?>
 
     <div class="container">
+
+        <!-- Botón para abrir el modal -->
+        <div class="mt-4">
+            <button class="btn btn-success btn-m" data-bs-toggle="modal" data-bs-target="#modalRegistrarJugador">
+                <i class="fas fa-user-plus me-2"></i>
+                Registrar Nuevo Jugador
+            </button>
+        </div>
         <div class="selection-container">
             <h2 class="text-center mb-4">
                 <i class="fas fa-users me-2"></i>
@@ -114,7 +122,33 @@
         </div>
     </div>
 
+    <!-- Contador de jugadores seleccionados -->
     <div class="counter-badge" id="playerCounter">0</div>
+
+    <!-- Modal para registrar nuevo jugador -->
+    <div class="modal fade" id="modalRegistrarJugador" tabindex="-1" aria-labelledby="modalRegistrarJugadorLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalRegistrarJugadorLabel">Registrar Nuevo Jugador</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form action="registrar_jugador.php" method="POST">
+                        <div class="mb-3">
+                            <label for="nombreJugador" class="form-label">Nombre del Jugador</label>
+                            <input type="text" class="form-control" id="nombreJugador" name="nombre" required>
+                        </div>
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary">Registrar Jugador</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
