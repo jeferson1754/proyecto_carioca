@@ -30,6 +30,25 @@ while ($row = $result->fetch_assoc()) {
     }
 }
 
+// Obtener la cantidad de partidas jugadas y ganadas por cada jugador
+$sql = "SELECT * FROM jugadores;";
+$result = $conn->query($sql);
+
+// Calcular las probabilidades
+$probabilidades = [];
+while ($row = $result->fetch_assoc()) {
+    $jugador_id = $row['id'];
+    $partidas_jugadas = $row['partidas_jugadas'];
+    $partidas_ganadas = $row['partidas_ganadas'];
+
+    // Calcular la probabilidad de ganar (si se han jugado partidas)
+    if ($partidas_jugadas > 0) {
+        $probabilidades[$jugador_id] = $partidas_ganadas / $partidas_jugadas;
+    } else {
+        $probabilidades[$jugador_id] = 0;  // Si no ha jugado partidas, la probabilidad es 0
+    }
+}
+
 // Determinar colores según el puntaje
 $puntajes = array_column($jugadores, 'puntajes');
 $max_puntaje = max(array_map('max', $puntajes));
@@ -66,11 +85,18 @@ $cantidad_juegos = count($juegos);
         <h1><?php echo $juego; ?></h1> <!-- Mostrar todos los juegos -->
     </div>
 
+
+
     <div class="d-flex justify-content-center gap-4">
-        <?php foreach ($jugadores as $jugador): ?>
+        <?php
+        foreach ($jugadores as $id_jugador => $jugador): ?>
             <div class="border p-3 text-center">
                 <h5><?php echo htmlspecialchars($jugador['nombre']); ?></h5>
-                <p>??%</p> <!-- Aquí iría la probabilidad de ganar -->
+                <!-- Mostrar la probabilidad de ganar -->
+                <p><?php
+                    $probabilidad = isset($probabilidades[$id_jugador]) ? $probabilidades[$id_jugador] : 0;
+                    echo number_format($probabilidad * 100, 2) . '%'; // Mostrar la probabilidad como porcentaje
+                    ?></p>
             </div>
         <?php endforeach; ?>
     </div>
@@ -140,26 +166,18 @@ $cantidad_juegos = count($juegos);
         </table>
         <br>
 
-
         <div class="d-flex justify-content-between mt-4">
-
             <button type="submit" class="btn btn-secondary mx-2" name="omitir">Omitir</button>
-
             <div class="d-flex justify-content-center w-100">
                 <button type="submit" class="btn btn-primary mx-2">Siguiente Juego →</button>
             </div>
-
-            <?php
-            if ($cantidad_juegos >= 5): ?>
+            <?php if ($cantidad_juegos >= 5): ?>
                 <a href="finalizar_partida.php?id=<?php echo urlencode($partida_id); ?>">
                     <button type="button" class="btn btn-success mx-2">Finalizar</button>
                 </a>
             <?php endif; ?>
-
         </div>
-
         <br>
-
     </form>
 
 </body>

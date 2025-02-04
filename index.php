@@ -14,7 +14,7 @@
     <div class="row w-100 g-4">
 
       <!-- Opción Jugar Carioca -->
-      <div class="col-md-6 col-lg-4">
+      <div class="col-md-6 col-lg-6">
         <div class="card text-center bg-pink p-4 shadow rounded">
           <a href="jugar.php" class="text-decoration-none text-dark">
             <i class="fas fa-gamepad fa-3x mb-3"></i>
@@ -25,7 +25,7 @@
       </div>
 
       <!-- Opción Historial de Partidas -->
-      <div class="col-md-6 col-lg-4">
+      <div class="col-md-6 col-lg-6">
         <div class="card text-center bg-success p-4 shadow rounded">
           <a href="historial.php" class="text-decoration-none text-dark">
             <i class="fas fa-history fa-3x mb-3"></i>
@@ -35,16 +35,6 @@
         </div>
       </div>
 
-      <!-- Opción Ajustes -->
-      <div class="col-md-6 col-lg-4">
-        <div class="card text-center bg-warning p-4 shadow rounded">
-          <a href="ajustes.php" class="text-decoration-none text-dark">
-            <i class="fas fa-cogs fa-3x mb-3"></i>
-            <h5 class="card-title">Ajustes</h5>
-            <p class="card-text">Configura tu experiencia</p>
-          </a>
-        </div>
-      </div>
 
     </div>
   </div>

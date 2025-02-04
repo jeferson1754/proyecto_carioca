@@ -39,7 +39,7 @@ foreach ($jugadores_puntajes as $jugador) {
         $perdedor = $jugador['id']; // El jugador con el puntaje más alto
     } else if ($jugador['puntaje'] == $min_puntaje) {
         $ganador = $jugador['id']; // El jugador con el puntaje más bajo
-    } 
+    }
 }
 
 // Ahora, actualizamos las partidas para cada jugador
@@ -95,6 +95,12 @@ foreach ($jugadores_puntajes as $jugador) {
                     WHERE id = $jugador_id";
 }
 
+
+// Actualizar la tabla jugador
+$update_sql = "UPDATE `partidas` set ganador_id = ? WHERE id= ?";
+$update_stmt = $conn->prepare($update_sql);
+$update_stmt->bind_param("ii", $ganador, $id_partida);
+$update_stmt->execute();
 
 
 // Redireccionar
