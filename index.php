@@ -11,6 +11,7 @@
     :root {
       --primary-color: #ff6b6b;
       --secondary-color: #4ecdc4;
+      --third-color: #f1f1f1;
       --background-gradient: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
     }
 
@@ -100,6 +101,58 @@
         padding: 2rem 1rem;
       }
     }
+
+    .card-player-management {
+      border: none;
+      border-radius: 16px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+      transition: all 0.3s ease;
+    }
+
+    .card-player-management:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.12);
+    }
+
+    .card-player-management .feature-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 70px;
+      height: 70px;
+      border-radius: 50%;
+      color: white;
+      margin-bottom: 1.25rem;
+    }
+
+    .bg-primary.bg-gradient {
+      background: linear-gradient(135deg, #4361ee, #3a56d4);
+    }
+
+    .card-player-management .card-title {
+      color: #212529;
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .card-player-management .card-text {
+      color: #6c757d;
+      font-size: 1rem;
+    }
+
+    .btn-primary {
+      background: linear-gradient(to right, #4361ee, #3a56d4);
+      border: none;
+      border-radius: 30px;
+      font-weight: 500;
+      letter-spacing: 0.5px;
+      transition: all 0.3s ease;
+    }
+
+    .btn-primary:hover {
+      background: linear-gradient(to right, #3a56d4, #324bc6);
+      box-shadow: 0 5px 15px rgba(67, 97, 238, 0.4);
+    }
   </style>
 </head>
 
@@ -139,6 +192,24 @@
           </div>
         </div>
       </div>
+      <div class="col-12 col-md-6 col-lg-5">
+        <div class="card card-player-management h-100">
+          <div class="card-body text-center p-4">
+            <div class="feature-icon bg-primary bg-gradient mb-4">
+              <i class="fas fa-user-edit fa-lg"></i>
+            </div>
+            <h3 class="card-title fw-bold">Gestión de Jugadores</h3>
+            <p class="card-text mb-4">Administra perfiles, actualiza estadísticas y configura roles dentro del equipo</p>
+            <div class="d-grid gap-2 d-md-flex justify-content-md-center">
+              <a href="editar-jugadores.php" class="btn btn-primary px-4 py-2">
+                Editar Jugadores
+                <i class="fas fa-angle-right ms-2"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
     </div>
   </div>
 

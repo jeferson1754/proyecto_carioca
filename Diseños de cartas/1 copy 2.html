@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Team Manager - Gestión de Jugadores</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #00b894;
+            --primary-gradient: linear-gradient(135deg, #00b894, #00cec9);
+            --secondary: #0984e3;
+            --accent: #6c5ce7;
+            --dark: #2d3436;
+            --light: #ffffff;
+            --background: #f1f2f6;
+            --danger: #e17055;
+            --warning: #fdcb6e;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: var(--background);
+            color: var(--dark);
+            line-height: 1.6;
+            background-image: 
+                radial-gradient(circle at 80% 20%, rgba(0, 184, 148, 0.03) 0%, transparent 40%),
+                radial-gradient(circle at 20% 80%, rgba(9, 132, 227, 0.03) 0%, transparent 40%);
+            background-attachment: fixed;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem;
+        }
+        
+        .dashboard-header {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2.5rem;
+            position: relative;
+            padding-bottom: 1rem;
+        }
+        
+        .dashboard-header::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: var(--primary-gradient);
+            border-radius: 2px;
+        }
+        
+        .dashboard-title {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: var(--dark);
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+        
+        .dashboard-title i {
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-right: 1rem;
+            font-size: 2rem;
+        }
+        
+        .dashboard-stats {
+            display: flex;
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+        
+        .stat-card {
+            flex: 1;
+            background: var(--light);
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+            display: flex;
+            align-items: center;
+        }
+        
+        .stat-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 1rem;
+            font-size: 1.5rem;
+            color: white;
+        }
+        
+        .icon-players {
+            background: var(--primary-gradient);
+        }
+        
+        .icon-active {
+            background: linear-gradient(135deg, #0984e3, #74b9ff);
+        }
+        
+        .stat-info h4 {
+            font-size: 0.9rem;
+            color: #718093;
+            margin-bottom: 0.2rem;
+        }
+        
+        .stat-info p {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--dark);
+        }
+        
+        .add-player-section {
+            background: var(--light);
+            border-radius: 16px;
+            margin-bottom: 3rem;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+        }
+        
+        .section-header {
+            background: var(--primary-gradient);
+            padding: 1.5rem 2rem;
+            color: white;
+        }
+        
+        .section-header h2 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+        }
+        
+        .section-header h2 i {
+            margin-right: 0.8rem;
+        }
+        
+        .form-container {
+            padding: 2rem;
+        }
+        
+        .player-form {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1.5rem;
+            align-items: end;
+        }
+        
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .form-group label {
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #636e72;
+        }
+        
+        .form-control {
+            padding: 1rem;
+            border: 2px solid #dfe6e9;
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+        
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(0, 184, 148, 0.2);
+        }
+        
+        .btn {
+            font-family: inherit;
+            font-weight: 600;
+            font-size: 1rem;
+            padding: 1rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+        
+        .btn-primary {
+            background: var(--primary-gradient);
+            color: white;
+            box-shadow: 0 4px 10px rgba(0, 184, 148, 0.3);
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(0, 184, 148, 0.4);
+        }
+        
+        .btn i {
+            margin-right: 0.5rem;
+        }
+        
+        .players-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+        
+        .player-card {
+            background: var(--light);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.07);
+            transition: transform 0.3s, box-shadow 0.3s;
+            position: relative;
+        }
+        
+        .player-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+        }
+        
+        .player-header {
+            position: relative;
+            padding: 2.5rem 1.5rem 1.5rem;
+            text-align: center;
+        }
+        
+        .player-avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            margin: 0 auto 1rem;
+            overflow: hidden;
+            background: #f5f6fa;
+            border: 4px solid white;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .player-avatar i {
+            font-size: 3rem;
+            color: #b2bec3;
+        }
+        
+        .player-name {
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-bottom: 0.2rem;
+        }
+        
+        .player-role {
+            color: #636e72;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+        
+        .status-badge {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            padding: 0.4rem 0.7rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            background: #c8fcea;
+            color: var(--primary);
+        }
+        
+        .player-body {
+            padding: 0 1.5rem 1.5rem;
+        }
+        
+        .player-info {
+            margin-bottom: 1.5rem;
+        }
+        
+        .info-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.8rem;
+            font-size: 0.95rem;
+        }
+        
+        .info-item i {
+            width: 30px;
+            color: var(--primary);
+            margin-right: 0.8rem;
+        }
+        
+        .player-actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+        
+        .btn-edit {
+            background: linear-gradient(135deg, #0984e3, #74b9ff);
+            color: white;
+            box-shadow: 0 4px 10px rgba(9, 132, 227, 0.3);
+        }
+        
+        .btn-edit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(9, 132, 227, 0.4);
+        }
+        
+        .btn-delete {
+            background: white;
+            color: var(--danger);
+            border: 2px solid var(--danger);
+        }
+        
+        .btn-delete:hover {
+            background: var(--danger);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(225, 112, 85, 0.3);
+        }
+        
+        .section-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+        }
+        
+        .section-title i {
+            margin-right: 1rem;
+            color: var(--secondary);
+        }
+        
+        @media (max-width: 768px) {
+            .dashboard-stats {
+                flex-direction: column;
+            }
+            
+            .player-actions {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="dashboard-header">
+            <h1 class="dashboard-title">
+                <i class="fas fa-users-cog"></i>
+                Gestión de Jugadores
+            </h1>
+        </header>
+        
+        <div class="dashboard-stats">
+            <div class="stat-card">
+                <div class="stat-icon icon-players">
+                    <i class="fas fa-users"></i>
+                </div>
+                <div class="stat-info">
+                    <h4>Total Jugadores</h4>
+                    <p>12</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon icon-active">
+                    <i class="fas fa-user-check"></i>
+                </div>
+                <div class="stat-info">
+                    <h4>Jugadores Activos</h4>
+                    <p>8</p>
+                </div>
+            </div>
+        </div>
+        
+        <section class="add-player-section">
+            <div class="section-header">
+                <h2><i class="fas fa-user-plus"></i> Añadir Nuevo Jugador</h2>
+            </div>
+            <div class="form-container">
+                <form action="crud.php" method="post" class="player-form">
+                    <div class="form-group">
+                        <label for="nombre">Nombre Completo</label>
+                        <input type="text" id="nombre" name="nombre" class="form-control" placeholder="Ej: Juan Pérez García" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Correo Electrónico</label>
+                        <input type="email" id="email" name="email" class="form-control" placeholder="Ej: juanperez@email.com" required>
+                    </div>
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-plus-circle"></i> Agregar Jugador
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </section>
+        
+        <h2 class="section-title">
+            <i class="fas fa-user-friends"></i>
+            Jugadores Registrados
+        </h2>
+        
+        <div class="players-grid">
+            <div class="player-card">
+                <span class="status-badge">Activo</span>
+                <div class="player-header">
+                    <div class="player-avatar">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <h3 class="player-name">Juan Pérez</h3>
+                    <p class="player-role">Delantero</p>
+                </div>
+                <div class="player-body">
+                    <div class="player-info">
+                        <div class="info-item">
+                            <i class="fas fa-envelope"></i>
+                            <span>juan@example.com</span>
+                        </div>
+                        <div class="info-item">
+                            <i class="fas fa-phone"></i>
+                            <span>+34 612 345 678</span>
+                        </div>
+                        <div class="info-item">
+                            <i class="fas fa-calendar-alt"></i>
+                            <span>Registrado: 15/01/2023</span>
+                        </div>
+                    </div>
+                    <div class="player-actions">
+                        <button class="btn btn-edit">
+                            <i class="fas fa-user-edit"></i> Editar
+                        </button>
+                        <button class="btn btn-delete">
+                            <i class="fas fa-user-minus"></i> Eliminar
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="player-card">
+                <span class="status-badge">Activo</span>
+                <div class="player-header">
+                    <div class="player-avatar">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <h3 class="player-name">María López</h3>
+                    <p class="player-role">Centrocampista</p>
+                </div>
+                <div class="player-body">
+                    <div class="player-info">
+                        <div class="info-item">
+                            <i class="fas fa-envelope"></i>
+                            <span>maria@example.com</span>
+                        </div>
+                        <div class="info-item">
+                            <i class="fas fa-phone"></i>
+                            <span>+34 623 456 789</span>
+                        </div>
+                        <div class="info-item">
+                            <i class="fas fa-calendar-alt"></i>
+                            <span>Registrado: 03/03/2023</span>
+                        </div>
+                    </div>
+                    <div class="player-actions">
+                        <button class="btn btn-edit">
+                            <i class="fas fa-user-edit"></i> Editar
+                        </button>
+                        <button class="btn btn-delete">
+                            <i class="fas fa-user-minus"></i> Eliminar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

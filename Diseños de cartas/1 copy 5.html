@@ -1,0 +1,684 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gestión de Jugadores - Gamificada</title>
+  <style>
+    :root {
+      --bg-color: #13151a;
+      --card-bg: #1e2028;
+      --accent: #ff6b6b;
+      --accent-dark: #ee5253;
+      --success: #1dd1a1;
+      --info: #54a0ff;
+      --warning: #feca57;
+      --text: #f1f2f6;
+      --text-secondary: #a4b0be;
+      --border: #2f3542;
+    }
+    
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text);
+      padding: 20px;
+      background-image: radial-gradient(circle at 10% 20%, rgba(255, 107, 107, 0.05) 0%, transparent 20%),
+                        radial-gradient(circle at 90% 80%, rgba(84, 160, 255, 0.05) 0%, transparent 20%);
+    }
+    
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    
+    .game-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 30px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--border);
+    }
+    
+    .game-logo {
+      font-size: 28px;
+      font-weight: 800;
+      background: linear-gradient(to right, var(--accent), var(--info));
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .game-logo::before {
+      content: "♠♥♦♣";
+      font-size: 24px;
+      background: linear-gradient(to right, var(--accent), var(--info));
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    
+    .player-level {
+      background-color: var(--card-bg);
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      border: 1px solid var(--border);
+    }
+    
+    .level-icon {
+      width: 30px;
+      height: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent), var(--info));
+      font-weight: bold;
+    }
+    
+    .xp-bar {
+      background-color: rgba(255, 255, 255, 0.1);
+      height: 8px;
+      width: 100px;
+      border-radius: 4px;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .xp-progress {
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 100%;
+      width: 75%;
+      background: linear-gradient(to right, var(--accent), var(--info));
+      border-radius: 4px;
+    }
+    
+    .game-tabs {
+      display: flex;
+      gap: 5px;
+      margin-bottom: 30px;
+      overflow-x: auto;
+      padding-bottom: 10px;
+    }
+    
+    .tab {
+      padding: 10px 20px;
+      border-radius: 8px;
+      background-color: var(--card-bg);
+      cursor: pointer;
+      transition: all 0.3s;
+      border: 1px solid var(--border);
+      font-size: 14px;
+      white-space: nowrap;
+    }
+    
+    .tab.active {
+      background-color: rgba(255, 107, 107, 0.2);
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+    
+    .tab:hover:not(.active) {
+      background-color: rgba(255, 255, 255, 0.05);
+    }
+    
+    .game-section {
+      background-color: var(--card-bg);
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      overflow: hidden;
+      margin-bottom: 30px;
+    }
+    
+    .section-header {
+      padding: 20px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .section-title {
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .section-title::before {
+      content: "";
+      display: block;
+      width: 3px;
+      height: 18px;
+      background: linear-gradient(to bottom, var(--accent), var(--info));
+      border-radius: 3px;
+    }
+    
+    .section-content {
+      padding: 20px;
+    }
+    
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+    
+    .form-group {
+      margin-bottom: 15px;
+    }
+    
+    .form-label {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 14px;
+      color: var(--text-secondary);
+    }
+    
+    .form-control {
+      width: 100%;
+      padding: 12px 15px;
+      background-color: rgba(0, 0, 0, 0.2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      font-family: 'Poppins', sans-serif;
+      transition: all 0.3s;
+    }
+    
+    .form-control:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(255, 107, 107, 0.1);
+    }
+    
+    .form-actions {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 20px;
+    }
+    
+    .btn {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      font-family: 'Poppins', sans-serif;
+    }
+    
+    .btn-accent {
+      background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+      color: white;
+    }
+    
+    .btn-accent:hover {
+      box-shadow: 0 5px 15px rgba(255, 107, 107, 0.3);
+      transform: translateY(-2px);
+    }
+    
+    .player-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 20px;
+    }
+    
+    .gamer-card {
+      position: relative;
+      background-color: rgba(0, 0, 0, 0.2);
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      overflow: hidden;
+      transition: all 0.3s;
+    }
+    
+    .gamer-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+      border-color: rgba(255, 107, 107, 0.5);
+    }
+    
+    .card-header {
+      padding: 15px;
+      background: linear-gradient(135deg, rgba(255, 107, 107, 0.2), rgba(84, 160, 255, 0.2));
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .player-rank {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .rank-icon {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: bold;
+    }
+    
+    .rank-legendary {
+      background: linear-gradient(135deg, #ff9a00, #ff0058);
+      color: white;
+    }
+    
+    .rank-epic {
+      background: linear-gradient(135deg, #b146c2, #8e44ad);
+      color: white;
+    }
+    
+    .player-badge {
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+    
+    .badge-pro {
+      background-color: rgba(29, 209, 161, 0.2);
+      color: var(--success);
+    }
+    
+    .badge-tournament {
+      background-color: rgba(254, 202, 87, 0.2);
+      color: var(--warning);
+    }
+    
+    .card-body {
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+    
+    .player-info {
+      display: flex;
+      gap: 15px;
+      align-items: center;
+    }
+    
+    .player-avatar {
+      width: 60px;
+      height: 60px;
+      background-color: var(--card-bg);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      font-weight: bold;
+      background: linear-gradient(135deg, rgba(255, 107, 107, 0.1), rgba(84, 160, 255, 0.1));
+      border: 2px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .player-details {
+      flex: 1;
+    }
+    
+    .player-name {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+    
+    .player-email {
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+    
+    .player-stats {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    
+    .stat-item {
+      background-color: rgba(0, 0, 0, 0.2);
+      padding: 10px;
+      border-radius: 8px;
+      flex: 1;
+      min-width: calc(50% - 5px);
+      text-align: center;
+    }
+    
+    .stat-value {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 5px;
+      background: linear-gradient(to right, var(--accent), var(--info));
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    
+    .stat-label {
+      font-size: 11px;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+    }
+    
+    .card-decks {
+      display: flex;
+      gap: 5px;
+      overflow-x: auto;
+      padding: 5px 0;
+    }
+    
+    .deck-preview {
+      flex: 0 0 30px;
+      height: 40px;
+      background-color: rgba(0, 0, 0, 0.2);
+      border-radius: 5px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .deck-preview::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(to right, var(--accent), var(--info));
+    }
+    
+    .card-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 5px;
+    }
+    
+    .action-btn {
+      flex: 1;
+      padding: 8px;
+      font-size: 13px;
+      background-color: rgba(0, 0, 0, 0.2);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text);
+      cursor: pointer;
+      transition: all 0.3s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    
+    .action-btn-edit {
+      border-color: rgba(84, 160, 255, 0.3);
+      color: var(--info);
+    }
+    
+    .action-btn-edit:hover {
+      background-color: rgba(84, 160, 255, 0.1);
+    }
+    
+    .action-btn-delete {
+      border-color: rgba(255, 107, 107, 0.3);
+      color: var(--accent);
+    }
+    
+    .action-btn-delete:hover {
+      background-color: rgba(255, 107, 107, 0.1);
+    }
+    
+    @media (max-width: 768px) {
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .player-list {
+        grid-template-columns: 1fr;
+      }
+      
+      .game-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="game-header">
+      <div class="game-logo">CardMaster Manager</div>
+      <div class="player-level">
+        <div class="level-icon">30</div>
+        <div>
+          <div style="font-size: 12px; margin-bottom: 3px;">Nivel de Admin</div>
+          <div class="xp-bar">
+            <div class="xp-progress"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="game-tabs">
+      <div class="tab active">Jugadores</div>
+      <div class="tab">Torneos</div>
+      <div class="tab">Cartas</div>
+      <div class="tab">Estadísticas</div>
+      <div class="tab">Tienda</div>
+      <div class="tab">Configuración</div>
+    </div>
+    
+    <div class="game-section">
+      <div class="section-header">
+        <h3 class="section-title">Registro de Jugador</h3>
+        <span style="font-size: 13px; color: var(--text-secondary);">+ 50 XP por cada jugador agregado</span>
+      </div>
+      <div class="section-content">
+        <form action="crud.php" method="post">
+          <div class="form-grid">
+            <div>
+              <div class="form-group">
+                <label class="form-label">Nombre del Jugador</label>
+                <input type="text" class="form-control" name="nombre" placeholder="Ingresa el nombre" required>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Email</label>
+                <input type="email" class="form-control" name="email" placeholder="correo@ejemplo.com" required>
+              </div>
+            </div>
+            
+            <div>
+              <div class="form-group">
+                <label class="form-label">Tipo de Juego</label>
+                <select class="form-control" name="tipo_juego">
+                  <option value="tcg">Trading Card Game</option>
+                  <option value="lcg">Living Card Game</option>
+                  <option value="classic">Cartas Clásicas</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Mazo Principal</label>
+                <select class="form-control" name="mazo">
+                  <option value="aggro">Aggro</option>
+                  <option value="control">Control</option>
+                  <option value="midrange">Midrange</option>
+                  <option value="combo">Combo</option>
+                </select>
+              </div>
+            </div>
+            
+            <div>
+              <div class="form-group">
+                <label class="form-label">Nivel de Habilidad</label>
+                <select class="form-control" name="nivel">
+                  <option value="novato">Novato</option>
+                  <option value="amateur">Amateur</option>
+                  <option value="intermedio">Intermedio</option>
+                  <option value="avanzado">Avanzado</option>
+                  <option value="experto">Experto</option>
+                  <option value="pro">Profesional</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">ID de Torneo (opcional)</label>
+                <input type="text" class="form-control" name="id_torneo" placeholder="Ej: TRN-2023-001">
+              </div>
+            </div>
+          </div>
+          
+          <div class="form-actions">
+            <button type="submit" class="btn btn-accent">+ Agregar Jugador</button>
+          </div>
+        </form>
+      </div>
+    </div>
+    
+    <div class="game-section">
+      <div class="section-header">
+        <h3 class="section-title">Jugadores Activos</h3>
+        <span style="font-size: 13px; color: var(--text-secondary);">Mostrando 2 de 24 jugadores</span>
+      </div>
+      <div class="section-content">
+        <div class="player-list">
+          <!-- Jugador 1 -->
+          <div class="gamer-card">
+            <div class="card-header">
+              <div class="player-rank">
+                <div class="rank-icon rank-legendary">L</div>
+                <span>Legendario</span>
+              </div>
+              <div class="player-badge badge-pro">PRO</div>
+            </div>
+            <div class="card-body">
+              <div class="player-info">
+                <div class="player-avatar">JP</div>
+                <div class="player-details">
+                  <div class="player-name">Juan Pérez</div>
+                  <div class="player-email">juan@example.com</div>
+                </div>
+              </div>
+              
+              <div class="player-stats">
+                <div class="stat-item">
+                  <div class="stat-value">87%</div>
+                  <div class="stat-label">Win Rate</div>
+                </div>
+                <div class="stat-item">
+                  <div class="stat-value">243</div>
+                  <div class="stat-label">Partidas</div>
+                </div>
+                <div class="stat-item">
+                  <div class="stat-value">Control</div>
+                  <div class="stat-label">Estilo</div>
+                </div>
+                <div class="stat-item">
+                  <div class="stat-value">15</div>
+                  <div class="stat-label">Torneos</div>
+                </div>
+              </div>
+              
+              <div class="card-decks">
+                <div class="deck-preview">♠</div>
+                <div class="deck-preview">♥</div>
+                <div class="deck-preview">♦</div>
+                <div class="deck-preview">♣</div>
+                <div class="deck-preview">+2</div>
+              </div>
+              
+              <div class="card-actions">
+                <button class="action-btn action-btn-edit">
+                  Editar
+                </button>
+                <button class="action-btn action-btn-delete">
+                  Eliminar
+                </button>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Jugador 2 -->
+          <div class="gamer-card">
+            <div class="card-header">
+              <div class="player-rank">
+                <div class="rank-icon rank-epic">E</div>
+                <span>Épico</span>
+              </div>
+              <div class="player-badge badge-tournament">Torneo</div>
+            </div>
+            <div class="card-body">
+              <div class="player-info">
+                <div class="player-avatar">ML</div>
+                <div class="player-details">
+                  <div class="player-name">María López</div>
+                  <div class="player-email">maria@example.com</div>
+                </div>
+              </div>
+              
+              <div class="player-stats">
+                <div class="stat-item">
+                  <div class="stat-value">72%</div>
+                  <div class="stat-label">Win Rate</div>
+                </div>
+                <div class="stat-item">
+                  <div class="stat-value">187</div>
+                  <div class="stat-label">Partidas</div>
+                </div>
+                <div class="stat-item">
+                  <div class="stat-value">Aggro</div>
+                  <div class="stat-label">Estilo</div>
+                </div>
+                <div class="stat-item">
+                  <div class="stat-value">8</div>
+                  <div class="stat-label">Torneos</div>
+                </div>
+              </div>
+              
+              <div class="card-decks">
+                <div class="deck-preview">♥</div>
+                <div class="deck-preview">♦</div>
+                <div class="deck-preview">♣</div>
+                <div class="deck-preview">+1</div>
+              </div>
+              
+              <div class="card-actions">
+                <button class="action-btn action-btn-edit">
+                  Editar
+                </button>
+                <button class="action-btn action-btn-delete">
+                  Eliminar
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

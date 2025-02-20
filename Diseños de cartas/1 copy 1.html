@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Jugadores - Material Design</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #3f51b5;
+            --primary-light: #5c6bc0;
+            --primary-dark: #303f9f;
+            --accent: #ff4081;
+            --text-primary: #212121;
+            --text-secondary: #757575;
+            --background: #f5f5f5;
+            --card: #ffffff;
+            --success: #4caf50;
+            --danger: #f44336;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Roboto', 'Segoe UI', sans-serif;
+            background-color: var(--background);
+            color: var(--text-primary);
+            line-height: 1.6;
+            padding: 24px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+        }
+        
+        h1 {
+            font-size: 28px;
+            font-weight: 500;
+            color: var(--primary-dark);
+        }
+        
+        .page-title {
+            position: relative;
+            padding-bottom: 8px;
+        }
+        
+        .page-title::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            height: 3px;
+            width: 60px;
+            background-color: var(--primary);
+        }
+        
+        .add-form-container {
+            background: var(--card);
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 32px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .form-header {
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .form-header i {
+            color: var(--primary);
+            margin-right: 10px;
+            font-size: 24px;
+        }
+        
+        .form-header h2 {
+            font-size: 20px;
+            font-weight: 500;
+        }
+        
+        .form-content {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            align-items: flex-end;
+        }
+        
+        .form-group {
+            flex: 1;
+            min-width: 200px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border 0.3s, box-shadow 0.3s;
+        }
+        
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--primary-light);
+            box-shadow: 0 0 0 2px rgba(63, 81, 181, 0.2);
+        }
+        
+        .btn {
+            cursor: pointer;
+            border: none;
+            border-radius: 8px;
+            padding: 12px 24px;
+            font-size: 16px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+            box-shadow: 0 4px 8px rgba(63, 81, 181, 0.4);
+        }
+        
+        .btn-submit {
+            height: 48px;
+            min-width: 150px;
+        }
+        
+        .btn i {
+            margin-right: 8px;
+        }
+        
+        .cards-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 24px;
+        }
+        
+        .card {
+            background-color: var(--card);
+            border-radius: 12px;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 25px rgba(0, 0, 0, 0.15);
+        }
+        
+        .card-header {
+            background-color: var(--primary-light);
+            color: white;
+            padding: 16px;
+            text-align: center;
+        }
+        
+        .card-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background-color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        
+        .card-avatar i {
+            font-size: 36px;
+            color: var(--primary);
+        }
+        
+        .card-body {
+            padding: 24px;
+        }
+        
+        .player-info {
+            margin-bottom: 20px;
+        }
+        
+        .player-info p {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+            color: var(--text-secondary);
+        }
+        
+        .player-info i {
+            width: 24px;
+            margin-right: 8px;
+            color: var(--primary);
+        }
+        
+        .card-actions {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+        
+        .btn-edit {
+            background-color: var(--primary-light);
+            color: white;
+        }
+        
+        .btn-edit:hover {
+            background-color: var(--primary);
+        }
+        
+        .btn-delete {
+            background-color: transparent;
+            color: var(--danger);
+            border: 1px solid var(--danger);
+        }
+        
+        .btn-delete:hover {
+            background-color: var(--danger);
+            color: white;
+        }
+        
+        .section-divider {
+            display: flex;
+            align-items: center;
+            margin: 36px 0;
+        }
+        
+        .divider-line {
+            flex: 1;
+            height: 1px;
+            background-color: #e0e0e0;
+        }
+        
+        .divider-text {
+            padding: 0 16px;
+            color: var(--text-secondary);
+            font-size: 16px;
+            font-weight: 500;
+        }
+        
+        @media (max-width: 768px) {
+            .form-content {
+                flex-direction: column;
+            }
+            
+            .cards-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .card-actions {
+                flex-direction: column;
+                gap: 12px;
+            }
+            
+            .btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1 class="page-title">Gestión de Jugadores</h1>
+        </header>
+        
+        <section class="add-form-container">
+            <div class="form-header">
+                <i class="fas fa-user-plus"></i>
+                <h2>Añadir Nuevo Jugador</h2>
+            </div>
+            <form action="crud.php" method="post" class="form-content">
+                <div class="form-group">
+                    <label for="nombre">Nombre del Jugador</label>
+                    <input type="text" id="nombre" name="nombre" placeholder="Ej: Juan Pérez" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">Correo Electrónico</label>
+                    <input type="email" id="email" name="email" placeholder="Ej: juan@ejemplo.com" required>
+                </div>
+                <button type="submit" class="btn btn-primary btn-submit">
+                    <i class="fas fa-plus-circle"></i>Agregar Jugador
+                </button>
+            </form>
+        </section>
+        
+        <div class="section-divider">
+            <div class="divider-line"></div>
+            <span class="divider-text">Jugadores Registrados</span>
+            <div class="divider-line"></div>
+        </div>
+        
+        <section class="cards-container">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-avatar">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <h3>Juan Pérez</h3>
+                </div>
+                <div class="card-body">
+                    <div class="player-info">
+                        <p><i class="fas fa-envelope"></i>juan@example.com</p>
+                        <p><i class="fas fa-calendar-alt"></i>Miembro desde: 15/01/2023</p>
+                    </div>
+                    <div class="card-actions">
+                        <button class="btn btn-edit">
+                            <i class="fas fa-pencil-alt"></i>Editar
+                        </button>
+                        <button class="btn btn-delete">
+                            <i class="fas fa-trash-alt"></i>Eliminar
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-avatar">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <h3>María López</h3>
+                </div>
+                <div class="card-body">
+                    <div class="player-info">
+                        <p><i class="fas fa-envelope"></i>maria@example.com</p>
+                        <p><i class="fas fa-calendar-alt"></i>Miembro desde: 03/03/2023</p>
+                    </div>
+                    <div class="card-actions">
+                        <button class="btn btn-edit">
+                            <i class="fas fa-pencil-alt"></i>Editar
+                        </button>
+                        <button class="btn btn-delete">
+                            <i class="fas fa-trash-alt"></i>Eliminar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+</body>
+</html>

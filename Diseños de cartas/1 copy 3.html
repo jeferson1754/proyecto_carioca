@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gestión de Jugadores - Juegos de Cartas</title>
+  <style>
+    body {
+      font-family: 'Playfair Display', serif;
+      background-color: #0a3b2d;
+      background-image: url('/api/placeholder/1200/800');
+      background-size: cover;
+      background-attachment: fixed;
+      padding: 20px;
+      color: #f0e6d2;
+    }
+    
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    
+    .header {
+      text-align: center;
+      margin-bottom: 40px;
+      position: relative;
+    }
+    
+    .header h2 {
+      font-size: 36px;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+      font-weight: bold;
+      letter-spacing: 2px;
+      color: #e2d2a2;
+      margin-bottom: 0;
+    }
+    
+    .header::after {
+      content: "♠ ♥ ♦ ♣";
+      display: block;
+      font-size: 24px;
+      letter-spacing: 12px;
+      text-align: center;
+      margin-top: 10px;
+      color: #cd7f32;
+      text-shadow: 0 0 5px #ffd700;
+    }
+    
+    .card-table {
+      background-color: rgba(9, 45, 27, 0.85);
+      border-radius: 15px;
+      padding: 30px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+      border: 3px solid #cd7f32;
+    }
+    
+    form {
+      background-color: rgba(5, 25, 15, 0.9);
+      padding: 25px;
+      margin-bottom: 30px;
+      border-radius: 10px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+      border: 1px solid #cd7f32;
+    }
+    
+    .form-header {
+      margin-top: 0;
+      color: #e2d2a2;
+      text-align: center;
+      font-size: 22px;
+      margin-bottom: 20px;
+      border-bottom: 1px solid #cd7f32;
+      padding-bottom: 10px;
+    }
+    
+    input[type="text"],
+    input[type="email"] {
+      width: 100%;
+      padding: 12px;
+      margin: 8px 0;
+      background-color: rgba(240, 230, 210, 0.9);
+      border: 1px solid #cd7f32;
+      border-radius: 5px;
+      color: #0a3b2d;
+      font-family: 'Playfair Display', serif;
+    }
+    
+    input[type="text"]:focus,
+    input[type="email"]:focus {
+      outline: none;
+      box-shadow: 0 0 0 2px #ffd700;
+    }
+    
+    .btn {
+      background-color: #cd7f32;
+      color: #0a3b2d;
+      padding: 10px 20px;
+      border: none;
+      cursor: pointer;
+      border-radius: 5px;
+      font-weight: bold;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin: 5px;
+      transition: all 0.3s;
+      box-shadow: 0 3px 5px rgba(0, 0, 0, 0.2);
+    }
+    
+    .btn:hover {
+      background-color: #ffd700;
+      transform: translateY(-2px);
+    }
+    
+    .player-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 25px;
+    }
+    
+    .player-card {
+      position: relative;
+      height: 360px;
+      perspective: 1000px;
+    }
+    
+    .card-inner {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      transition: transform 0.6s;
+      transform-style: preserve-3d;
+    }
+    
+    .player-card:hover .card-inner {
+      transform: rotateY(180deg);
+    }
+    
+    .card-front, .card-back {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      -webkit-backface-visibility: hidden;
+      backface-visibility: hidden;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+      border: 2px solid #cd7f32;
+    }
+    
+    .card-front {
+      background: linear-gradient(120deg, #1a2a6c, #b21f1f, #fdbb2d);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      padding: 20px;
+      text-align: center;
+    }
+    
+    .card-front::before {
+      content: "";
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      font-size: 24px;
+      color: rgba(255, 255, 255, 0.8);
+    }
+    
+    .card-back {
+      background: linear-gradient(120deg, #654ea3, #eaafc8);
+      transform: rotateY(180deg);
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    
+    .player-name {
+      font-size: 24px;
+      font-weight: bold;
+      margin: 0 0 10px 0;
+      text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+    }
+    
+    .card-suit {
+      font-size: 50px;
+      margin: 15px 0;
+    }
+    
+    .player-avatar {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      background-color: #e2d2a2;
+      margin: 0 auto 15px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 40px;
+      color: #0a3b2d;
+      border: 3px solid #cd7f32;
+      box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+    }
+    
+    .player-stats {
+      margin: 15px 0;
+      font-size: 16px;
+    }
+    
+    .stat-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 8px;
+    }
+    
+    .stat-value {
+      font-weight: bold;
+      color: #ffd700;
+    }
+    
+    .card-actions {
+      display: flex;
+      justify-content: space-around;
+      margin-top: auto;
+    }
+    
+    .submit-container {
+      text-align: center;
+      margin-top: 20px;
+    }
+    
+    @media (max-width: 768px) {
+      .player-cards {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h2>Gestión de Jugadores de Cartas</h2>
+    </div>
+    
+    <div class="card-table">
+      <!-- Formulario para agregar jugador -->
+      <form action="crud.php" method="post">
+        <h3 class="form-header">Registrar Nuevo Jugador</h3>
+        <input type="text" name="nombre" placeholder="Nombre del Jugador" required>
+        <input type="text" name="email" placeholder="Email" required>
+        <input type="text" name="juego" placeholder="Juego Favorito" required>
+        <div class="submit-container">
+          <button type="submit" class="btn">Agregar Jugador</button>
+        </div>
+      </form>
+      
+      <!-- Tarjetas de jugadores -->
+      <div class="player-cards">
+        <div class="player-card">
+          <div class="card-inner">
+            <div class="card-front">
+              <div class="player-avatar">JP</div>
+              <h3 class="player-name">Juan Pérez</h3>
+              <div class="card-suit">♠</div>
+              <p>Especialista en Poker</p>
+            </div>
+            <div class="card-back">
+              <h3 class="player-name">Juan Pérez</h3>
+              <p>Email: juan@example.com</p>
+              <div class="player-stats">
+                <div class="stat-row">
+                  <span>Partidas:</span>
+                  <span class="stat-value">142</span>
+                </div>
+                <div class="stat-row">
+                  <span>Victorias:</span>
+                  <span class="stat-value">87</span>
+                </div>
+                <div class="stat-row">
+                  <span>Ranking:</span>
+                  <span class="stat-value">Diamante</span>
+                </div>
+                <div class="stat-row">
+                  <span>Último juego:</span>
+                  <span class="stat-value">Blackjack</span>
+                </div>
+              </div>
+              <div class="card-actions">
+                <button class="btn">Editar</button>
+                <button class="btn">Eliminar</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="player-card">
+          <div class="card-inner">
+            <div class="card-front">
+              <div class="player-avatar">ML</div>
+              <h3 class="player-name">María López</h3>
+              <div class="card-suit">♥</div>
+              <p>Campeona de Bridge</p>
+            </div>
+            <div class="card-back">
+              <h3 class="player-name">María López</h3>
+              <p>Email: maria@example.com</p>
+              <div class="player-stats">
+                <div class="stat-row">
+                  <span>Partidas:</span>
+                  <span class="stat-value">204</span>
+                </div>
+                <div class="stat-row">
+                  <span>Victorias:</span>
+                  <span class="stat-value">126</span>
+                </div>
+                <div class="stat-row">
+                  <span>Ranking:</span>
+                  <span class="stat-value">Platino</span>
+                </div>
+                <div class="stat-row">
+                  <span>Último juego:</span>
+                  <span class="stat-value">Bridge</span>
+                </div>
+              </div>
+              <div class="card-actions">
+                <button class="btn">Editar</button>
+                <button class="btn">Eliminar</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gestión de Jugadores - TCG</title>
+  <style>
+    :root {
+      --primary: #6c5ce7;
+      --secondary: #00cec9;
+      --dark: #2d3436;
+      --light: #f7f7f7;
+      --danger: #d63031;
+      --success: #00b894;
+      --warning: #fdcb6e;
+      --info: #0984e3;
+    }
+    
+    body {
+      font-family: 'Montserrat', sans-serif;
+      background-color: #dfe6e9;
+      background-image: url('/api/placeholder/1500/800');
+      background-size: cover;
+      background-attachment: fixed;
+      margin: 0;
+      padding: 20px;
+      color: var(--dark);
+      line-height: 1.6;
+    }
+    
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    
+    .dashboard {
+      background-color: rgba(255, 255, 255, 0.9);
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+    }
+    
+    .dashboard-header {
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      padding: 25px 30px;
+      color: white;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .dashboard-title {
+      margin: 0;
+      font-size: 24px;
+      font-weight: 600;
+    }
+    
+    .dashboard-stats {
+      display: flex;
+      gap: 20px;
+    }
+    
+    .stat-box {
+      background-color: rgba(255, 255, 255, 0.2);
+      padding: 8px 16px;
+      border-radius: 10px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    
+    .stat-value {
+      font-size: 18px;
+      font-weight: bold;
+    }
+    
+    .stat-label {
+      font-size: 12px;
+      opacity: 0.8;
+    }
+    
+    .dashboard-content {
+      padding: 30px;
+    }
+    
+    .section-title {
+      font-size: 18px;
+      color: var(--primary);
+      margin-top: 0;
+      margin-bottom: 20px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .section-title::before {
+      content: "";
+      display: block;
+      width: 4px;
+      height: 20px;
+      background-color: var(--primary);
+      border-radius: 2px;
+    }
+    
+    .form-container {
+      background-color: white;
+      padding: 25px;
+      border-radius: 15px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+      margin-bottom: 30px;
+    }
+    
+    .form-group {
+      margin-bottom: 15px;
+    }
+    
+    .form-label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 500;
+      font-size: 14px;
+      color: #636e72;
+    }
+    
+    .form-control {
+      width: 100%;
+      padding: 12px 15px;
+      border: 1px solid #dfe6e9;
+      border-radius: 8px;
+      font-family: 'Montserrat', sans-serif;
+      transition: all 0.3s;
+    }
+    
+    .form-control:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.1);
+    }
+    
+    .form-actions {
+      display: flex;
+      justify-content: flex-end;
+    }
+    
+    .btn {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      font-family: 'Montserrat', sans-serif;
+    }
+    
+    .btn-primary {
+      background-color: var(--primary);
+      color: white;
+    }
+    
+    .btn-primary:hover {
+      background-color: #5549d6;
+      box-shadow: 0 5px 15px rgba(108, 92, 231, 0.3);
+    }
+    
+    .btn-danger {
+      background-color: var(--danger);
+      color: white;
+    }
+    
+    .btn-danger:hover {
+      background-color: #c52a2a;
+    }
+    
+    .btn-info {
+      background-color: var(--info);
+      color: white;
+    }
+    
+    .btn-info:hover {
+      background-color: #0876c9;
+    }
+    
+    .player-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 25px;
+    }
+    
+    .player-card {
+      position: relative;
+      background-color: white;
+      border-radius: 15px;
+      overflow: hidden;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+    
+    .player-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 12px 25px rgba(0, 0, 0, 0.1);
+    }
+    
+    .card-banner {
+      height: 80px;
+      background: linear-gradient(to right, #5499C7, #2980B9);
+      position: relative;
+    }
+    
+    .player-card[data-rank="gold"] .card-banner {
+      background: linear-gradient(to right, #F4D03F, #F1C40F);
+    }
+    
+    .player-card[data-rank="silver"] .card-banner {
+      background: linear-gradient(to right, #BDC3C7, #95A5A6);
+    }
+    
+    .player-card[data-rank="bronze"] .card-banner {
+      background: linear-gradient(to right, #D35400, #E67E22);
+    }
+    
+    .player-avatar {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background-color: #f5f6fa;
+      border: 4px solid white;
+      position: absolute;
+      left: 20px;
+      top: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 30px;
+      color: var(--primary);
+      font-weight: bold;
+    }
+    
+    .card-body {
+      padding: 60px 20px 20px 20px;
+    }
+    
+    .player-name {
+      font-size: 18px;
+      font-weight: 600;
+      margin: 0 0 5px 0;
+      color: var(--dark);
+    }
+    
+    .player-email {
+      color: #636e72;
+      font-size: 14px;
+      margin: 0 0 15px 0;
+    }
+    
+    .player-meta {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    
+    .meta-item {
+      background-color: #f7f7f7;
+      padding: 10px;
+      border-radius: 8px;
+      text-align: center;
+    }
+    
+    .meta-value {
+      font-weight: 600;
+      font-size: 16px;
+      display: block;
+      color: var(--primary);
+    }
+    
+    .meta-label {
+      font-size: 12px;
+      color: #636e72;
+    }
+    
+    .card-badge {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      padding: 5px 10px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      color: white;
+    }
+    
+    .badge-gold {
+      background-color: #F1C40F;
+    }
+    
+    .badge-silver {
+      background-color: #95A5A6;
+    }
+    
+    .badge-bronze {
+      background-color: #E67E22;
+    }
+    
+    .player-deck {
+      margin-top: 15px;
+      display: flex;
+      gap: 5px;
+      flex-wrap: wrap;
+    }
+    
+    .deck-card {
+      width: 30px;
+      height: 40px;
+      background-color: #f7f7f7;
+      border-radius: 3px;
+      border: 1px solid #dfe6e9;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      color: var(--dark);
+    }
+    
+    .card-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 15px;
+    }
+    
+    .card-actions .btn {
+      flex: 1;
+      padding: 8px;
+      font-size: 14px;
+    }
+    
+    @media (max-width: 768px) {
+      .dashboard-header {
+        flex-direction: column;
+        gap: 15px;
+        align-items: flex-start;
+      }
+      
+      .dashboard-stats {
+        width: 100%;
+        overflow-x: auto;
+        padding-bottom: 10px;
+      }
+      
+      .player-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="dashboard">
+      <div class="dashboard-header">
+        <h2 class="dashboard-title">Gestión de Jugadores de TCG</h2>
+        <div class="dashboard-stats">
+          <div class="stat-box">
+            <span class="stat-value">48</span>
+            <span class="stat-label">Jugadores</span>
+          </div>
+          <div class="stat-box">
+            <span class="stat-value">12</span>
+            <span class="stat-label">Torneos</span>
+          </div>
+          <div class="stat-box">
+            <span class="stat-value">187</span>
+            <span class="stat-label">Partidas</span>
+          </div>
+        </div>
+      </div>
+      
+      <div class="dashboard-content">
+        <!-- Formulario para agregar jugador -->
+        <h3 class="section-title">Registrar Nuevo Jugador</h3>
+        <div class="form-container">
+          <form action="crud.php" method="post">
+            <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+              <div class="form-group">
+                <label class="form-label">Nombre del Jugador</label>
+                <input type="text" class="form-control" name="nombre" required>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Email</label>
+                <input type="email" class="form-control" name="email" required>
+              </div>
+            </div>
+            
+            <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px;">
+              <div class="form-group">
+                <label class="form-label">Juego Principal</label>
+                <select class="form-control" name="juego">
+                  <option>Magic: The Gathering</option>
+                  <option>Pokémon TCG</option>
+                  <option>Yu-Gi-Oh!</option>
+                  <option>Hearthstone</option>
+                  <option>Legends of Runeterra</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Ranking</label>
+                <select class="form-control" name="ranking">
+                  <option>Bronce</option>
+                  <option>Plata</option>
+                  <option>Oro</option>
+                  <option>Platino</option>
+                  <option>Diamante</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Experiencia (años)</label>
+                <input type="number" class="form-control" name="experiencia" min="0" max="30">
+              </div>
+            </div>
+            
+            <div class="form-actions">
+              <button type="submit" class="btn btn-primary">Agregar Jugador</button>
+            </div>
+          </form>
+        </div>
+        
+        <!-- Listado de jugadores -->
+        <h3 class="section-title">Jugadores Activos</h3>
+        <div class="player-grid">
+          <!-- Jugador 1 -->
+          <div class="player-card" data-rank="gold">
+            <div class="card-banner"></div>
+            <div class="player-avatar">JP</div>
+            <span class="card-badge badge-gold">Oro</span>
+            <div class="card-body">
+              <h3 class="player-name">Juan Pérez</h3>
+              <p class="player-email">juan@example.com</p>
+              
+              <div class="player-meta">
+                <div class="meta-item">
+                  <span class="meta-value">78%</span>
+                  <span class="meta-label">Win Rate</span>
+                </div>
+                <div class="meta-item">
+                  <span class="meta-value">32</span>
+                  <span class="meta-label">Torneos</span>
+                </div>
+                <div class="meta-item">
+                  <span class="meta-value">MTG</span>
+                  <span class="meta-label">Juego</span>
+                </div>
+                <div class="meta-item">
+                  <span class="meta-value">5</span>
+                  <span class="meta-label">Años</span>
+                </div>
+              </div>
+              
+              <div class="player-deck">
+                <div class="deck-card">A♠</div>
+                <div class="deck-card">J♥</div>
+                <div class="deck-card">Q♦</div>
+                <div class="deck-card">K♣</div>
+                <div class="deck-card">+3</div>
+              </div>
+              
+              <div class="card-actions">
+                <button class="btn btn-info">Editar</button>
+                <button class="btn btn-danger">Eliminar</button>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Jugador 2 -->
+          <div class="player-card" data-rank="silver">
+            <div class="card-banner"></div>
+            <div class="player-avatar">ML</div>
+            <span class="card-badge badge-silver">Plata</span>
+            <div class="card-body">
+              <h3 class="player-name">María López</h3>
+              <p class="player-email">maria@example.com</p>
+              
+              <div class="player-meta">
+                <div class="meta-item">
+                  <span class="meta-value">62%</span>
+                  <span class="meta-label">Win Rate</span>
+                </div>
+                <div class="meta-item">
+                  <span class="meta-value">18</span>
+                  <span class="meta-label">Torneos</span>
+                </div>
+                <div class="meta-item">
+                  <span class="meta-value">YGO</span>
+                  <span class="meta-label">Juego</span>
+                </div>
+                <div class="meta-item">
+                  <span class="meta-value">3</span>
+                  <span class="meta-label">Años</span>
+                </div>
+              </div>
+              
+              <div class="player-deck">
+                <div class="deck-card">K♠</div>
+                <div class="deck-card">Q♥</div>
+                <div class="deck-card">J♦</div>
+                <div class="deck-card">10♣</div>
+                <div class="deck-card">+2</div>
+              </div>
+              
+              <div class="card-actions">
+                <button class="btn btn-info">Editar</button>
+                <button class="btn btn-danger">Eliminar</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

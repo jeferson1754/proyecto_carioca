@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gestión de Jugadores</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f9f9f9;
+      padding: 20px;
+    }
+
+    .card {
+      background-color: #fff;
+      padding: 20px;
+      margin: 15px;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      display: inline-block;
+      width: calc(33.333% - 30px);
+      text-align: center;
+      vertical-align: top;
+    }
+
+    .card h3 {
+      margin-top: 0;
+    }
+
+    .btn {
+      background-color: #4CAF50;
+      color: white;
+      padding: 8px 16px;
+      border: none;
+      cursor: pointer;
+      text-align: center;
+      border-radius: 5px;
+      margin: 5px;
+    }
+
+    .btn:hover {
+      background-color: #45a049;
+    }
+
+    form {
+      background-color: #fff;
+      padding: 20px;
+      margin-top: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+  </style>
+</head>
+
+<body>
+
+  <h2>Gestión de Jugadores</h2>
+
+  <!-- Formulario para agregar jugador -->
+  <form action="crud.php" method="post">
+    <input type="text" name="nombre" placeholder="Nombre del Jugador" required>
+    <input type="text" name="email" placeholder="Email" required>
+    <input type="submit" class="btn" value="Agregar Jugador">
+  </form>
+
+  <!-- Tarjetas de jugadores -->
+  <div class="card">
+    <h3>Juan Pérez</h3>
+    <p>Email: juan@example.com</p>
+    <button class="btn">Editar</button>
+    <button class="btn">Eliminar</button>
+  </div>
+  <div class="card">
+    <h3>María López</h3>
+    <p>Email: maria@example.com</p>
+    <button class="btn">Editar</button>
+    <button class="btn">Eliminar</button>
+  </div>
+
+</body>
+
+</html>
