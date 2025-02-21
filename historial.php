@@ -112,7 +112,7 @@ $result = $conn->query($sql);
                         <div class="game-card">
                             <div class="row align-items-center">
                                 <div class="col-md-3">
-                                    <div class="d-flex flex-column">
+                                    <div class="d-flex flex-column mb-2">
                                         <small class="text-muted">Fecha</small>
                                         <strong>
                                             <i class="far fa-calendar-alt me-2"></i>
@@ -123,27 +123,27 @@ $result = $conn->query($sql);
                                         </small>
                                     </div>
                                 </div>
-                                <div class="col-md-2">
+                                <div class="col-md-2 mb-2">
                                     <div class="stat-box text-center">
                                         <div><i class="fas fa-dice me-1"></i></div>
                                         <?php echo $row['total_juegos']; ?> Juegos
                                     </div>
                                 </div>
-                                <div class="col-md-3">
+                                <div class="col-md-3 mb-2">
                                     <div class="winner-badge">
                                         <i class="fas fa-trophy me-2"></i>
                                         <?php echo htmlspecialchars($row['ganador']); ?>
                                     </div>
                                 </div>
-                                <div class="col-md-2 text-center">
+                                <div class="col-md-2 text-center mb-2">
                                     <div class="d-flex flex-column">
                                         <small class="text-muted">Puntaje Total</small>
                                         <strong><?php echo number_format($row['puntaje_total']); ?></strong>
                                     </div>
                                 </div>
-                                <div class="col-md-2 text-end">
+                                <div class="col-md-2 text-center">
                                     <a href="./puntajes_historial.php?id=<?php echo urlencode($row['id']); ?>"
-                                        class="details-btn">
+                                        class="details-btn" style="text-decoration: none;">
                                         <i class="fas fa-chart-bar me-2"></i>
                                         Detalles
                                     </a>

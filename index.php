@@ -199,9 +199,9 @@
               <i class="fas fa-user-edit fa-lg"></i>
             </div>
             <h3 class="card-title fw-bold">Gestión de Jugadores</h3>
-            <p class="card-text mb-4">Administra perfiles, actualiza estadísticas y configura roles dentro del equipo</p>
+            <p class="card-text mb-4">Administra perfiles, visualiza estadísticas y configura datos del equipo</p>
             <div class="d-grid gap-2 d-md-flex justify-content-md-center">
-              <a href="editar-jugadores.php" class="btn btn-primary px-4 py-2">
+              <a href="gestion_jugadores.php" class="btn btn-primary px-4 py-2">
                 Editar Jugadores
                 <i class="fas fa-angle-right ms-2"></i>
               </a>
